@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Components/AuthNav";
-import Footer from "../Components/Footer";
+import Navbar from "../components/AuthNav";
+import Footer from "../components/Footer";
 import styles from "../Stylesheets/Register.module.css";
 
 export default function Register() {
@@ -25,7 +25,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch("https://gigachat-ivoq.onrender.com/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
