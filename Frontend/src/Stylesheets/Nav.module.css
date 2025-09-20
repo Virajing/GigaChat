@@ -1,0 +1,55 @@
+/* Navbar Styling */
+.navbar {
+  width: 100%;
+  padding: 15px 40px;
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  gap: 8px;
+  color: #ffd700;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  font-size: 18px;
+}
+
+.nav-links li {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  margin-top: 5%;
+}
+
+.nav-links li:hover {
+  color: #ffd700;
+}
+.cta-btn{
+  background: #ffd700;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.cta-btn:hover {
+  background: #e6c200;
+  transform: scale(1.05);
+}
