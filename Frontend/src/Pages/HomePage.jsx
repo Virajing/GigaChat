@@ -2,9 +2,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Sparkles } from "lucide-react";
 import {  useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import styles from "../Stylesheets/HomePage.module.css"; // import the CSS file
 import Navbar from "../components/AuthNav";
 import Footer from "../components/Footer";
+=======
+import styles from "../Stylesheets/Homepage.module.css"; 
+import Navbar from "../Components/AuthNav";
+import Footer from "../Components/Footer";
+>>>>>>> 9b0ff1b1c1a30931000e61fc319a1660c1f08569
 
 export default function HomePage() {
   const navigate = useNavigate();
