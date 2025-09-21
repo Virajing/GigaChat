@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/AuthNav";
-import Footer from "../components/Footer";
+import Navbar from "../Components/AuthNav";
+import Footer from "../Components/Footer";
 import styles from "../Stylesheets/Register.module.css";
 
 export default function Register() {
