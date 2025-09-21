@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Sparkles } from "lucide-react";
 import {  useNavigate } from 'react-router-dom';
-import styles from "../Stylesheets/HomePage.module.css"; // import the CSS file
+import styles from "../Stylesheets/Homepage.module.css"; // import the CSS file
 import Navbar from "../Components/AuthNav";
 import Footer from "../Components/Footer";
 
