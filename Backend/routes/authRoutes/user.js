@@ -9,9 +9,9 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_key";
 // ------------------- REGISTER -------------------
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, name, email, password } = req.body;
 
-    if (!username || !email || !password) {
+    if (!username || !name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -28,6 +28,7 @@ router.post("/register", async (req, res) => {
     // Create new user
     const newUser = await User.create({
       username,
+      name,
       email,
       password: hashedPassword,
     });
@@ -37,6 +38,7 @@ router.post("/register", async (req, res) => {
       user: {
         id: newUser._id,
         username: newUser.username,
+        name: newUser.name,
         email: newUser.email,
       },
     });

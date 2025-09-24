@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/AuthNav";
 import Footer from "../Components/Footer";
 import styles from "../Stylesheets/Register.module.css";
+import axios from "axios";
 
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
+    name: "",
     email: "",
     password: "",
   });
@@ -25,17 +27,18 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://gigachat-ivoq.onrender.com/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await axios.post(
+        "https://gigachat-ivoq.onrender.com/auth/register",
+        formData,
+        {
+          headers: {
+        "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = res.data;
 
-      const data = await res.json();
-
-      if (!res.ok) {
+      if (res.status !== 200 && res.status !== 201) {
         throw new Error(data.message || "Something went wrong");
       }
 
@@ -70,6 +73,14 @@ export default function Register() {
               name="username"
               placeholder="Username"
               value={formData.username}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData.name}
               onChange={handleChange}
               required
             />
