@@ -33,13 +33,21 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
     });
 
+    // Create JWT token
+    const token = jwt.sign(
+      { id: newUser._id, username: newUser.username, email: newUser.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
     res.status(201).json({
       message: "User registered successfully",
+      token,
       user: {
-        id: newUser._id,
-        username: newUser.username,
-        name: newUser.name,
-        email: newUser.email,
+      id: newUser._id,
+      username: newUser.username,
+      name: newUser.name,
+      email: newUser.email,
       },
     });
   } catch (err) {
@@ -51,22 +59,22 @@ router.post("/register", async (req, res) => {
 // ------------------- LOGIN -------------------
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
     }
 
-    // Find user by email
-    const user = await User.findOne({ email });
+    // Find user by username
+    const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid username or password" });
     }
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid username or password" });
     }
 
     // Create JWT token

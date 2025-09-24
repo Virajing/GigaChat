@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/AuthNav";
 import Footer from "../Components/Footer";
 import styles from "../Stylesheets/Register.module.css"; // reuse same styles
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -30,18 +31,20 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://gigachat-ivoq.onrender.com/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await axios.post(
+        "https://gigachat-ivoq.onrender.com/auth/login",
+        formData,
+        {
+          headers: {
+        "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = res.data;
 
-      const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Invalid email or password");
+        throw new Error(data.message || "Invalid username or password");
       }
 
       console.log("User logged in:", data);
@@ -76,14 +79,14 @@ export default function Login() {
           <h2>Login to Your Account</h2>
           <form onSubmit={handleSubmit} className={styles["register-form"]}>
             <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
+              type="name"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
               onChange={handleChange}
               required
-              autoComplete="email"
-              aria-label="Email"
+              autoComplete="username"
+              aria-label="Username"
             />
             <input
               type="password"
