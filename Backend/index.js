@@ -9,7 +9,10 @@ const PORT = process.env.PORT;
 const authRoutes = require('./routes/authRoutes/user');
 const mongoConnection = require('./conn/mongo');
 
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:5173", "https://gigachat-three.vercel.app"], 
+    credentials: true,
+  }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRoutes);
