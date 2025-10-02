@@ -23,7 +23,7 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
-    if (!formData.email || !formData.password) {
+    if (!formData.username || !formData.password) {
       setError("All fields are required");
       return;
     }
