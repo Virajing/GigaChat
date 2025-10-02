@@ -15,17 +15,14 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       return res.status(400).json({ message: "Username or email already exists" });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user
     const newUser = await User.create({
       username,
       name,
@@ -33,7 +30,6 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
     });
 
-    // Create JWT token
     const token = jwt.sign(
       { id: newUser._id, username: newUser.username, email: newUser.email },
       JWT_SECRET,
@@ -44,10 +40,10 @@ router.post("/register", async (req, res) => {
       message: "User registered successfully",
       token,
       user: {
-      id: newUser._id,
-      username: newUser.username,
-      name: newUser.name,
-      email: newUser.email,
+        id: newUser._id,
+        username: newUser.username,
+        name: newUser.name,
+        email: newUser.email,
       },
     });
   } catch (err) {
@@ -65,32 +61,29 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Username and password are required" });
     }
 
-    // Find user by username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(400).json({ message: "Invalid username or password" });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid username or password" });
     }
 
-    // Create JWT token
     const token = jwt.sign(
       { id: user._id, username: user.username, email: user.email },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    res.status(200).json({ 
+    res.status(200).json({
       message: "Login successful",
       token,
       user: {
-      id: user._id,
-      username: user.username,
-      email: user.email,ww 
+        id: user._id,
+        username: user.username,
+        email: user.email,
       },
     });
   } catch (err) {
