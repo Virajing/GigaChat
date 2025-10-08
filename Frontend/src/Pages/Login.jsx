@@ -42,12 +42,12 @@ export default function Login() {
       );
       const data = res.data;
 
-
-      if (!res.ok) {
-        throw new Error(data.message || "Invalid username or password");
-      }
-
+    } catch(err){
+        setError(err.response?.data?.message || "Login failed");     
+        return;
+     }
       console.log("User logged in:", data);
+      
 
       // Save token & user info
       if (data.token) {
