@@ -8,10 +8,12 @@ import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -36,20 +38,15 @@ export default function Login() {
         formData,
         {
           headers: {
-        "Content-Type": "application/json",
+            "Content-Type": "application/json",
           },
         }
       );
+
       const data = res.data;
-
-    } catch(err){
-        setError(err.response?.data?.message || "Login failed");     
-        return;
-     }
       console.log("User logged in:", data);
-      
 
-      // Save token & user info
+      // ✅ Save token & user info in localStorage
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
@@ -57,10 +54,11 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
-      navigate("/"); // redirect to home
+      // ✅ Redirect to home
+      navigate("/");
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      console.error("Login error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -77,9 +75,10 @@ export default function Login() {
           className={styles["register-container"]}
         >
           <h2>Login to Your Account</h2>
+
           <form onSubmit={handleSubmit} className={styles["register-form"]}>
             <input
-              type="name"
+              type="text"
               name="username"
               placeholder="Username"
               value={formData.username}
@@ -88,6 +87,7 @@ export default function Login() {
               autoComplete="username"
               aria-label="Username"
             />
+
             <input
               type="password"
               name="password"
