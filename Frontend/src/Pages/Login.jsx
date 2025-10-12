@@ -29,7 +29,7 @@ export default function Login() {
       setError("All fields are required");
       return;
     }
-
+    
     setLoading(true);
 
     try {
