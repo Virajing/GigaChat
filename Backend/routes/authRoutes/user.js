@@ -44,6 +44,8 @@ router.post("/register", async (req, res) => {
         username: newUser.username,
         name: newUser.name,
         email: newUser.email,
+        profilePic: newUser.profilePic,
+        bio: newUser.bio,
       },
     });
   } catch (err) {
@@ -85,11 +87,119 @@ router.post("/login", async (req, res) => {
         username: user.username,
         name: user.name,
         email: user.email,
+        profilePic: user.profilePic,
+        bio: user.bio,
       },
     });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Server error, please try again" });
+  }
+});
+
+// ------------------- GET ALL USERS -------------------
+router.get("/users/:id", async (req, res, next) => {
+  try {
+    console.log(`Fetching users excluding ${req.params.id}`);
+    const users = await User.find({ _id: { $ne: req.params.id } }).select("-password");
+    console.log(`Found ${users.length} users`);
+    res.json(users);
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+// ------------------- UPDATE PROFILE -------------------
+router.put("/update/:id", async (req, res) => {
+  try {
+    const { name, bio, profilePic } = req.body;
+    const userId = req.params.id;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, bio, profilePic },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ------------------- GET USER PROFILE -------------------
+router.get("/profile/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error("Get profile error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ------------------- SEARCH USERS -------------------
+router.get("/search", async (req, res) => {
+  try {
+    const { username } = req.query;
+    if (!username) return res.json([]);
+
+    const users = await User.find({
+      username: { $regex: username, $options: "i" },
+    }).select("username name profilePic email");
+
+    res.json(users);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ------------------- ADD CONTACT -------------------
+router.post("/add-contact", async (req, res) => {
+  try {
+    const { userId, contactId } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.contacts.includes(contactId)) {
+      return res.status(400).json({ message: "User already in contacts" });
+    }
+
+    user.contacts.push(contactId);
+    await user.save();
+
+    const contact = await User.findById(contactId).select("username name profilePic email");
+
+    res.json({ message: "Contact added", contact });
+  } catch (error) {
+    console.error("Add contact error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ------------------- GET CONTACTS -------------------
+router.get("/contacts/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate("contacts", "username name profilePic email");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user.contacts);
+  } catch (error) {
+    console.error("Get contacts error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

@@ -28,11 +28,11 @@ export default function Register() {
 
     try {
       const res = await axios.post(
-        "https://gigachat-ivoq.onrender.com/auth/register",
+        "http://localhost:3000/auth/register",
         formData,
         {
           headers: {
-        "Content-Type": "application/json",
+            "Content-Type": "application/json",
           },
         }
       );
@@ -47,10 +47,10 @@ export default function Register() {
       // ✅ Save token or user info if backend sends it
       // localStorage.setItem("token", data.token);
 
-      navigate("/"); // redirect to home
+      navigate("/main"); // redirect to chat
     } catch (err) {
       console.error(err);
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }

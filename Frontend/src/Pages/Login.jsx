@@ -29,12 +29,12 @@ export default function Login() {
       setError("All fields are required");
       return;
     }
-    
+
     setLoading(true);
 
     try {
       const res = await axios.post(
-        "https://gigachat-ivoq.onrender.com/auth/login",
+        "http://localhost:3000/auth/login",
         formData,
         {
           headers: {
@@ -54,8 +54,8 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
-      // ✅ Redirect to home
-      navigate("/");
+      // ✅ Redirect to chat
+      navigate("/main");
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Login failed. Please try again.");
