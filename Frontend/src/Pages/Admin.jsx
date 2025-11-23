@@ -13,6 +13,13 @@ const Admin = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         if (searchQuery) {
@@ -103,9 +110,16 @@ const Admin = () => {
     return (
         <div style={{ backgroundColor: '#1f2937', minHeight: '100vh', color: 'white', padding: '2rem' }}>
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    justifyContent: 'space-between',
+                    alignItems: isMobile ? 'flex-start' : 'center',
+                    marginBottom: '2rem',
+                    gap: isMobile ? '1rem' : '0'
+                }}>
                     <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Admin Dashboard</h1>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
                         <input
                             type="text"
                             placeholder="Search users & messages..."
@@ -115,7 +129,7 @@ const Admin = () => {
                                 padding: '0.5rem',
                                 borderRadius: '0.25rem',
                                 border: 'none',
-                                width: '300px',
+                                width: isMobile ? '100%' : '300px',
                                 backgroundColor: '#374151',
                                 color: 'white'
                             }}
@@ -128,7 +142,8 @@ const Admin = () => {
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '0.25rem',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                width: isMobile ? '100%' : 'auto'
                             }}
                         >
                             Back to Chat
@@ -136,7 +151,12 @@ const Admin = () => {
                     </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr', gap: '1rem' }}>
+                <div style={{
+                    display: isMobile ? 'flex' : 'grid',
+                    flexDirection: 'column',
+                    gridTemplateColumns: '1fr 1fr 2fr',
+                    gap: '1rem'
+                }}>
                     {/* Users List */}
                     <div style={{ backgroundColor: '#374151', padding: '1rem', borderRadius: '0.5rem', maxHeight: '80vh', overflowY: 'auto' }}>
                         <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>All Users ({filteredUsers.length})</h2>
