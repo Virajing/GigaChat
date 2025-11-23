@@ -8,6 +8,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+    name: '',
     password: '',
   });
 
@@ -53,6 +54,16 @@ const Register = () => {
               type="text"
               name="username"
               value={formData.username}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label>Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               required
             />
