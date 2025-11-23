@@ -180,14 +180,26 @@ const Profile = () => {
                         Back to Chat
                     </button>
                     {!isReadOnly && (
-                        <button
-                            onClick={handleSave}
-                            className="send-btn"
-                            style={{ flex: 1, textAlign: 'center' }}
-                            disabled={loading}
-                        >
-                            {loading ? 'Saving...' : 'Save Changes'}
-                        </button>
+                        <>
+                            <button
+                                onClick={handleSave}
+                                className="send-btn"
+                                style={{ flex: 1, textAlign: 'center' }}
+                                disabled={loading}
+                            >
+                                {loading ? 'Saving...' : 'Save Changes'}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    localStorage.removeItem('user');
+                                    navigate('/login');
+                                }}
+                                className="logout-btn"
+                                style={{ flex: 1, backgroundColor: '#ef4444', textAlign: 'center' }}
+                            >
+                                Logout
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
