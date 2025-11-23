@@ -6,7 +6,7 @@ import { API_URL } from '../config';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
 
@@ -46,11 +46,11 @@ const Login = () => {
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label>Email</label>
+            <label>Username</label>
             <input
-              type="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               required
             />
