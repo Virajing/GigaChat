@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const GroupSettings = () => {
     const { id } = useParams();
@@ -31,7 +32,7 @@ const GroupSettings = () => {
 
     const fetchGroup = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/groups/user/${currentUser.id}`);
+            const response = await axios.get(`${API_URL}/groups/user/${currentUser.id}`);
             const foundGroup = response.data.find(g => g._id === id);
             if (foundGroup) {
                 setGroup(foundGroup);
@@ -47,7 +48,7 @@ const GroupSettings = () => {
 
     const fetchContacts = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/auth/contacts/${currentUser.id}`);
+            const response = await axios.get(`${API_URL}/auth/contacts/${currentUser.id}`);
             setContacts(response.data);
         } catch (error) {
             console.error('Error fetching contacts:', error);
@@ -56,7 +57,7 @@ const GroupSettings = () => {
 
     const handleAddMember = async (memberId) => {
         try {
-            const response = await axios.put(`http://localhost:3000/groups/${id}/add-member`, {
+            const response = await axios.put(`${API_URL}/groups/${id}/add-member`, {
                 memberId
             });
             setGroup(response.data);
@@ -71,7 +72,7 @@ const GroupSettings = () => {
 
     const handleUpdateGroup = async () => {
         try {
-            const response = await axios.put(`http://localhost:3000/groups/${id}/update`, {
+            const response = await axios.put(`${API_URL}/groups/${id}/update`, {
                 name: groupName,
                 profilePic: groupPic
             });

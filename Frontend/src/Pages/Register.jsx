@@ -1,21 +1,18 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../Components/AuthNav";
-import Footer from "../Components/Footer";
-import styles from "../Stylesheets/Register.module.css";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import '../Stylesheets/Register.css';
+import { API_URL } from '../config';
 
-export default function Register() {
-  const navigate = useNavigate();
+const Register = () => {
   const [formData, setFormData] = useState({
-    username: "",
-    name: "",
-    email: "",
-    password: "",
+    username: '',
+    email: '',
+    password: '',
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,107 +20,73 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
+    setError('');
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/auth/register",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await axios.post(
+        `${API_URL}/auth/register`,
+        formData
       );
-      const data = res.data;
 
-      if (res.status !== 200 && res.status !== 201) {
-        throw new Error(data.message || "Something went wrong");
+      console.log('Registration successful:', response.data);
+
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        navigate('/main');
       }
-
-      console.log("User registered:", data);
-
-      // ✅ Save token or user info if backend sends it
-      // localStorage.setItem("token", data.token);
-
-      navigate("/main"); // redirect to chat
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || err.message);
-    } finally {
-      setLoading(false);
+      console.error('Registration error:', err);
+      console.error('Error response:', err.response);
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
     }
   };
 
   return (
-    <>
-      <Navbar />
-      <div className={styles.registerPage}>
-        <motion.div
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className={styles["register-container"]}
-        >
-          <h2>Create Your Account</h2>
-          <form onSubmit={handleSubmit} className={styles["register-form"]}>
+    <div className="register-container">
+      <div className="register-box">
+        <h2>Create Account</h2>
+        {error && <p className="error-message">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Username</label>
             <input
               type="text"
               name="username"
-              placeholder="Username"
               value={formData.username}
               onChange={handleChange}
               required
             />
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+          </div>
+          <div className="input-group">
+            <label>Email</label>
             <input
               type="email"
               name="email"
-              placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
               required
             />
+          </div>
+          <div className="input-group">
+            <label>Password</label>
             <input
               type="password"
               name="password"
-              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               required
             />
-
-            <button
-              type="submit"
-              className={styles["register-btn"]}
-              disabled={loading}
-            >
-              {loading ? "Signing Up..." : "Sign Up"}
-            </button>
-          </form>
-
-          {error && <p className={styles.error}>{error}</p>}
-
-          <p className={styles.para}>
-            Already have an account?{" "}
-            <span
-              className={styles["login-link"]}
-              onClick={() => navigate("/login")}
-            >
-              Login here
-            </span>
-          </p>
-        </motion.div>
+          </div>
+          <button type="submit" className="register-btn">
+            Register
+          </button>
+        </form>
+        <p className="login-link">
+          Already have an account? <a href="/login">Login here</a>
+        </p>
       </div>
-      <Footer />
-    </>
+    </div>
   );
-}
+};
+
+export default Register;

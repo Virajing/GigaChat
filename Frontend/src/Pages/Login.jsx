@@ -1,21 +1,17 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../Components/AuthNav";
-import Footer from "../Components/Footer";
-import styles from "../Stylesheets/Register.module.css"; // reuse same styles
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import '../Stylesheets/Login.css';
+import { API_URL } from '../config';
 
-export default function Login() {
-  const navigate = useNavigate();
-
+const Login = () => {
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,113 +19,62 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (!formData.username || !formData.password) {
-      setError("All fields are required");
-      return;
-    }
-
-    setLoading(true);
+    setError('');
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/auth/login",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await axios.post(
+        `${API_URL}/auth/login`,
+        formData
       );
 
-      const data = res.data;
-      console.log("User logged in:", data);
+      console.log('Login successful:', response.data);
 
-      // ✅ Save token & user info in localStorage
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        navigate('/main');
       }
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      // ✅ Redirect to chat
-      navigate("/main");
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
+      console.error('Login error:', err);
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     }
   };
 
   return (
-    <>
-      <Navbar />
-      <div className={styles.registerPage}>
-        <motion.div
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className={styles["register-container"]}
-        >
-          <h2>Login to Your Account</h2>
-
-          <form onSubmit={handleSubmit} className={styles["register-form"]}>
+    <div className="login-container">
+      <div className="login-box">
+        <h2>Welcome Back</h2>
+        {error && <p className="error-message">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Email</label>
             <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={formData.username}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               required
-              autoComplete="username"
-              aria-label="Username"
             />
-
+          </div>
+          <div className="input-group">
+            <label>Password</label>
             <input
               type="password"
               name="password"
-              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               required
-              autoComplete="current-password"
-              aria-label="Password"
             />
-
-            <button
-              type="submit"
-              className={styles["register-btn"]}
-              disabled={loading}
-            >
-              {loading ? "Logging In..." : "Login"}
-            </button>
-          </form>
-
-          {error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className={styles.error}
-            >
-              {error}
-            </motion.p>
-          )}
-
-          <p className={styles.para}>
-            Don’t have an account?{" "}
-            <span
-              className={styles["login-link"]}
-              onClick={() => navigate("/register")}
-            >
-              Register here
-            </span>
-          </p>
-        </motion.div>
+          </div>
+          <button type="submit" className="login-btn">
+            Login
+          </button>
+        </form>
+        <p className="register-link">
+          Don't have an account? <a href="/register">Register here</a>
+        </p>
       </div>
-      <Footer />
-    </>
+    </div>
   );
-}
+};
+
+export default Login;

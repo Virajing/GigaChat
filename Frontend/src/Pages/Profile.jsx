@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../Stylesheets/Chat.css';
+import { API_URL } from '../config';
 
 const Profile = () => {
     const navigate = useNavigate();
-    const { id } = useParams(); // Get user ID from URL if present
+    const { id } = useParams();
     const [user, setUser] = useState(null);
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
@@ -30,14 +31,12 @@ const Profile = () => {
         const fetchProfile = async () => {
             try {
                 if (isSelf) {
-                    // Editing own profile, use local storage or fetch fresh
                     setUser(currentUser);
                     setName(currentUser.name || '');
                     setBio(currentUser.bio || '');
                     setProfilePic(currentUser.profilePic || '');
                 } else {
-                    // Viewing another user's profile
-                    const response = await axios.get(`http://localhost:3000/auth/profile/${targetUserId}`);
+                    const response = await axios.get(`${API_URL}/auth/profile/${targetUserId}`);
                     const fetchedUser = response.data;
                     setUser(fetchedUser);
                     setName(fetchedUser.name || '');
@@ -59,15 +58,13 @@ const Profile = () => {
         setLoading(true);
         setMessage('');
         try {
-            const response = await axios.put(`http://localhost:3000/auth/update/${user.id || user._id}`, {
+            const response = await axios.put(`${API_URL}/auth/update/${user.id || user._id}`, {
                 name,
                 bio,
                 profilePic,
             });
 
-            // Update local storage with new user data
             const updatedUser = { ...user, ...response.data.user };
-            // Ensure ID is consistent
             updatedUser.id = updatedUser._id;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
@@ -90,7 +87,6 @@ const Profile = () => {
 
     if (!user) return <div className="chat-container"><div className="empty-state">Loading...</div></div>;
 
-    // Safety check for username
     const displayChar = user.username ? user.username[0].toUpperCase() : '?';
 
     return (
@@ -178,7 +174,7 @@ const Profile = () => {
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button
                         onClick={() => navigate('/main')}
-                        className="logout-btn" // Reusing logout style for cancel/back
+                        className="logout-btn"
                         style={{ flex: 1, backgroundColor: '#4b5563', textAlign: 'center' }}
                     >
                         Back to Chat

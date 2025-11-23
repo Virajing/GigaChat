@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../Components/Sidebar';
 import ChatWindow from '../Components/ChatWindow';
 import '../Stylesheets/Chat.css';
+import { API_URL, SOCKET_URL } from '../config';
 
-const socket = io('http://localhost:3000');
+const socket = io(SOCKET_URL);
 
 const Main = () => {
   const [users, setUsers] = useState([]);
@@ -36,7 +37,7 @@ const Main = () => {
       // Fetch contacts
       const fetchContacts = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/auth/contacts/${currentUser.id}`);
+          const response = await axios.get(`${API_URL}/auth/contacts/${currentUser.id}`);
           setUsers(response.data);
         } catch (error) {
           console.error('Error fetching contacts:', error);
@@ -46,7 +47,7 @@ const Main = () => {
       // Fetch groups
       const fetchGroups = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/groups/user/${currentUser.id}`);
+          const response = await axios.get(`${API_URL}/groups/user/${currentUser.id}`);
           setGroups(response.data);
           // Join group rooms
           response.data.forEach(group => {
@@ -65,7 +66,7 @@ const Main = () => {
   const handleSearchUsers = async (query) => {
     if (!query) return [];
     try {
-      const response = await axios.get(`http://localhost:3000/auth/search?username=${query}`);
+      const response = await axios.get(`${API_URL}/auth/search?username=${query}`);
       const filtered = response.data.filter(u =>
         u._id !== currentUser.id &&
         !users.some(c => c._id === u._id)
@@ -79,7 +80,7 @@ const Main = () => {
 
   const handleAddContact = async (contactId) => {
     try {
-      const response = await axios.post('http://localhost:3000/auth/add-contact', {
+      const response = await axios.post(`${API_URL}/auth/add-contact`, {
         userId: currentUser.id,
         contactId
       });
@@ -91,7 +92,7 @@ const Main = () => {
 
   const handleCreateGroup = async (name, members) => {
     try {
-      const response = await axios.post('http://localhost:3000/groups/create', {
+      const response = await axios.post(`${API_URL}/groups/create`, {
         name,
         members,
         admin: currentUser.id
@@ -109,10 +110,10 @@ const Main = () => {
       const fetchHistory = async () => {
         try {
           if (selectedGroup) {
-            const response = await axios.get(`http://localhost:3000/chat/group-history/${selectedGroup._id}`);
+            const response = await axios.get(`${API_URL}/chat/group-history/${selectedGroup._id}`);
             setMessages(response.data);
           } else {
-            const response = await axios.get(`http://localhost:3000/chat/history/${currentUser.id}/${selectedUser._id}`);
+            const response = await axios.get(`${API_URL}/chat/history/${currentUser.id}/${selectedUser._id}`);
             setMessages(response.data);
           }
         } catch (error) {

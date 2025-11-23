@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const Admin = () => {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ const Admin = () => {
 
     const fetchAllUsers = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/admin/users');
+            const response = await axios.get(`${API_URL}/admin/users`);
             setUsers(response.data);
             setLoading(false);
         } catch (error) {
@@ -46,7 +47,7 @@ const Admin = () => {
 
     const viewUserChat = async (userId, contactId) => {
         try {
-            const response = await axios.get(`http://localhost:3000/admin/chat/${userId}/${contactId}`);
+            const response = await axios.get(`${API_URL}/admin/chat/${userId}/${contactId}`);
             setMessages(response.data);
             setSelectedContact(contactId);
             setSelectedGroup(null);
@@ -57,7 +58,7 @@ const Admin = () => {
 
     const viewGroupChat = async (groupId) => {
         try {
-            const response = await axios.get(`http://localhost:3000/admin/group/${groupId}/messages`);
+            const response = await axios.get(`${API_URL}/admin/group/${groupId}/messages`);
             setMessages(response.data);
             setSelectedGroup(groupId);
             setSelectedContact(null);
