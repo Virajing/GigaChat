@@ -12,6 +12,35 @@ const Admin = () => {
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        if (searchQuery) {
+            const delayDebounceFn = setTimeout(() => {
+                searchMessages();
+            }, 500);
+            return () => clearTimeout(delayDebounceFn);
+        }
+    }, [searchQuery]);
+
+    const searchMessages = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/admin/search/messages?query=${searchQuery}`);
+            setMessages(response.data);
+            // Deselect others to focus on search results
+            setSelectedUser(null);
+            setSelectedContact(null);
+            setSelectedGroup(null);
+        } catch (error) {
+            console.error('Error searching messages:', error);
+        }
+    };
+
+    const filteredUsers = users.filter(user =>
+        user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.name && user.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -76,26 +105,42 @@ const Admin = () => {
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Admin Dashboard</h1>
-                    <button
-                        onClick={() => navigate('/main')}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: '#374151',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '0.25rem',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        Back to Chat
-                    </button>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <input
+                            type="text"
+                            placeholder="Search users & messages..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{
+                                padding: '0.5rem',
+                                borderRadius: '0.25rem',
+                                border: 'none',
+                                width: '300px',
+                                backgroundColor: '#374151',
+                                color: 'white'
+                            }}
+                        />
+                        <button
+                            onClick={() => navigate('/main')}
+                            style={{
+                                padding: '0.5rem 1rem',
+                                backgroundColor: '#374151',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '0.25rem',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Back to Chat
+                        </button>
+                    </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr', gap: '1rem' }}>
                     {/* Users List */}
                     <div style={{ backgroundColor: '#374151', padding: '1rem', borderRadius: '0.5rem', maxHeight: '80vh', overflowY: 'auto' }}>
-                        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>All Users ({users.length})</h2>
-                        {users.map(user => (
+                        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>All Users ({filteredUsers.length})</h2>
+                        {filteredUsers.map(user => (
                             <div
                                 key={user._id}
                                 onClick={() => setSelectedUser(user)}
@@ -174,7 +219,7 @@ const Admin = () => {
                         {messages.length > 0 ? (
                             <>
                                 <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>
-                                    Chat History ({messages.length} messages)
+                                    {searchQuery ? `Search Results (${messages.length})` : `Chat History (${messages.length} messages)`}
                                 </h2>
                                 {messages.map((msg, index) => (
                                     <div

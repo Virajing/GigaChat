@@ -83,4 +83,24 @@ router.get('/group/:groupId/messages', async (req, res) => {
     }
 });
 
+// Search messages by keyword
+router.get('/search/messages', async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) return res.json([]);
+
+        const messages = await Message.find({
+            content: { $regex: query, $options: 'i' }
+        })
+            .populate('sender', 'username name profilePic')
+            .sort({ timestamp: -1 })
+            .limit(50);
+
+        res.json(messages);
+    } catch (error) {
+        console.error('Error searching messages:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;
