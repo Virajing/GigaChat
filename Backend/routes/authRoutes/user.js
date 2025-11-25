@@ -62,7 +62,11 @@ router.post("/register", async (req, res) => {
     });
   } catch (err) {
     console.error("Register error:", err);
-    res.status(500).json({ message: "Server error, please try again" });
+    // Log validation errors specifically
+    if (err.name === 'ValidationError') {
+      console.error("Validation Error Details:", err.errors);
+    }
+    res.status(500).json({ message: "Server error, please try again", error: err.message });
   }
 });
 

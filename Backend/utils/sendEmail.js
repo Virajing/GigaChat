@@ -1,6 +1,16 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (email, subject, text) => {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.log('---------------------------------------------------');
+        console.log('WARNING: Email credentials not found in .env');
+        console.log(`Would have sent email to: ${email}`);
+        console.log(`Subject: ${subject}`);
+        console.log(`Body: ${text}`);
+        console.log('---------------------------------------------------');
+        return;
+    }
+
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail', // You can use other services
