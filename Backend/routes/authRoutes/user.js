@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/user"); // adjust path if needed
+const sendEmail = require("../../utils/sendEmail");
+const crypto = require("crypto");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_key";
 
@@ -23,22 +25,30 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+
     const newUser = await User.create({
       username,
       name,
       email,
       password: hashedPassword,
+      verificationToken,
+      isVerified: false
     });
 
-    const token = jwt.sign(
-      { id: newUser._id, username: newUser.username, email: newUser.email },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const verificationUrl = `${process.env.BASE_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}`;
+    const message = `Click the following link to verify your email: ${verificationUrl}`;
+
+    try {
+      await sendEmail(newUser.email, "Verify Email", message);
+      console.log(`Verification email sent to ${newUser.email}. Link: ${verificationUrl}`); // Log for dev
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      // Consider whether to rollback user creation or just inform user
+    }
 
     res.status(201).json({
-      message: "User registered successfully",
-      token,
+      message: "User registered successfully. Please check your email to verify your account.",
       user: {
         id: newUser._id,
         username: newUser.username,
@@ -47,11 +57,38 @@ router.post("/register", async (req, res) => {
         profilePic: newUser.profilePic,
         bio: newUser.bio,
         isAdmin: newUser.isAdmin,
+        isVerified: newUser.isVerified
       },
     });
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ message: "Server error, please try again" });
+  }
+});
+
+// ------------------- VERIFY EMAIL -------------------
+router.post("/verify-email", async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Invalid or missing token" });
+    }
+
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Email verified successfully" });
+  } catch (error) {
+    console.error("Verify email error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

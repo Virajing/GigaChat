@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     bio: { type: String, default: "" },
     contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     isAdmin: { type: Boolean, default: false },
+    isVerified: { type: Boolean, default: false },
+    verificationToken: { type: String },
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
