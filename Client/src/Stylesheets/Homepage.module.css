@@ -1,0 +1,99 @@
+/* default styles for Homepage component */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* Background & layout */
+.homepage {
+  min-height: 100vh;
+  background: #201c1c;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* Hero section */
+.hero h1 {
+  font-size: 48px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #e5e7eb;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.highlight {
+  color: #ffd700;
+}
+
+.hero-icon {
+  margin-bottom: 20px;
+}
+
+/* Features section */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 50px;
+  gap: 20px;
+  max-width: 1000px;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 15px;
+  width: 250px;
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.feature-card:hover {
+  transform: scale(1.05);
+}
+
+.feature-icon {
+  margin-bottom: 10px;
+}
+
+.feature-card h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+/* CTA section */
+.cta {
+  margin-top: 50px;
+}
+
+.cta-btn {
+  background: #ffd700;
+  color: black;
+  padding: 12px 30px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cta-btn:hover {
+  background: #facc15;
+}
